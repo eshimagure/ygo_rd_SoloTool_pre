@@ -1,0 +1,85 @@
+
+.text-center {
+ text-align: center;
+}
+.indent {
+  margin-left: 1rem;
+}
+.guide-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 4000;
+}
+
+.guide-modal {
+  background: #eeeeee;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.25);
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh; /* 画面の高さに対して最大80%まで */
+  display: flex;
+  flex-direction: column;
+}
+
+.guide-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.guide-modal-header h2 {
+  margin: 0;
+  font-size: clamp(16px, 2rem, 20px);
+}
+
+.guide-modal-close-button {
+  background: none;
+  border: none;
+  font-size: 25px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #6b7280;
+  padding: 0 0.5rem;
+}
+
+.guide-modal-content {
+  padding: 2rem 1.5rem;
+  overflow-y: auto; /* ★★★ この設定でコンテンツが長くなるとスクロールする ★★★ */
+}
+
+.guide-modal-content h3 {
+  font-size: clamp(16px, 1.8rem, 18px);
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.guide-modal-content p {
+  font-size: 16px;
+  margin-top: 0.3rem ;
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+.guide-img {
+ width:30rem ;
+ margin: 0 auto;
+ text-align: center;
+}
+.guide-img-mini {
+ width:15rem ;
+}
+.guide-img  img {
+  width: 100%;
+  border: 2px solid #c6c6c6;
+  border-radius: 8px;
+}
+

@@ -1,0 +1,40 @@
+.container {
+  padding: 1rem;
+  font-family: sans-serif;
+  background-color: #f4f4f4;
+}
+
+.input-group {
+  margin-bottom: 1rem;
+}
+
+.input-group input {
+  margin: 0 0.5rem;
+}
+
+.zones {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.zone-box {
+  border: 1px solid #ccc;
+  padding: 1rem;
+  background: white;
+  width: 200px;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.card-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 1rem;
+}
+.card-image {
+  width: 100px;
+  height: auto;
+  border: 1px solid #ccc;
+}
+
