@@ -102,7 +102,7 @@ export const FieldLayout: React.FC<FieldLayoutProps> = ({ initialGameState }) =>
   const resetGame = () => {
      if (window.confirm("デッキを読み込んだ直後の状態にリセットします。よろしいですか？")) {
     // ★★★ リセット時にlocalStorageもクリアする ★★★
-    localStorage.removeItem('rushDuelGameState'); 
+    // localStorage.removeItem('rushDuelGameState'); 
     setGameState(initialGameState);
     setHistory([]);
      }
@@ -387,21 +387,14 @@ export const FieldLayout: React.FC<FieldLayoutProps> = ({ initialGameState }) =>
     >
       <div className="field-grid">
         <SortableContext items={allItemIds} strategy={rectSortingStrategy}>
-          <div style={{gridArea: 'menu', padding: '0.5em'}}>
-             {/* <div className='utility'>
-               {isLoading ? '・・・' : (
-                    <>
-                        {diceResult && `🎲： ${diceResult}`}
-                        {coinResult && `コイン： ${coinResult}`}
-                    </>
-                )}
-            </div> */}
-              <button onClick={resetGame} className="operation-button top-menu">
+          <div style={{gridArea: 'menu'}} className="display">
+              <button onClick={resetGame} className="operation-button top-menu red">
                 リセット
                 <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M22 12c0 5.523-4.477 10-10 10S2 17.523 2 12S6.477 2 12 2v2a8 8 0 1 0 4.5 1.385V8h-2V2h6v2H18a9.99 9.99 0 0 1 4 8" /></svg>
                 </button>
               <span className="space"></span>
               <span className="space"></span>
+            <div>
               <button onClick={undo} className="operation-button top-menu">
                 <span>戻る</span>
                 <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.2em" viewBox="0 0 24 24"><path fill="currentColor" d="M8 7v4L2 6l6-5v4h5a8 8 0 1 1 0 16H4v-2h9a6 6 0 0 0 0-12z" /></svg>
@@ -415,6 +408,7 @@ export const FieldLayout: React.FC<FieldLayoutProps> = ({ initialGameState }) =>
                   <span>コイン</span>
                  <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.2em" viewBox="0 0 24 24"><path fill="currentColor" d="M6.315 5.022c-.473.386-.907.82-1.293 1.293L7.877 9.17A5 5 0 0 1 9.17 7.877zm9.808 9.808a5 5 0 0 1-1.293 1.293l2.855 2.855a9 9 0 0 0 1.293-1.293zm3.45 2.036l-2.952-2.952c.244-.59.379-1.236.379-1.914s-.135-1.324-.38-1.914l2.953-2.952A8.96 8.96 0 0 1 21 12a8.96 8.96 0 0 1-1.427 4.866M10.086 7.38L7.134 4.426A8.96 8.96 0 0 1 12 3a8.96 8.96 0 0 1 4.866 1.427L13.914 7.38A5 5 0 0 0 12 7c-.678 0-1.324.135-1.914.38M5.022 17.685c.386.473.82.907 1.293 1.293l2.855-2.855a5 5 0 0 1-1.293-1.293zM7 12c0-.678.135-1.324.38-1.914L4.426 7.134A8.96 8.96 0 0 0 3 12a8.96 8.96 0 0 0 1.427 4.866l2.952-2.952A5 5 0 0 1 7 12m9.866 7.573l-2.952-2.952A5 5 0 0 1 12 17a5 5 0 0 1-1.914-.38l-2.952 2.953A8.96 8.96 0 0 0 12 21a8.96 8.96 0 0 0 4.866-1.427M14.83 7.877a5 5 0 0 1 1.293 1.293l2.855-2.855a9 9 0 0 0-1.293-1.293z" /></svg>
               </button>
+            </div>
           </div>
           
           {Object.entries(gameState.zones).map(([id, card]) => (
@@ -504,7 +498,7 @@ export const FieldLayout: React.FC<FieldLayoutProps> = ({ initialGameState }) =>
           <div className="deck-buttons-container">
               <button onClick={() => handleDraw(1)} className="operation-button deck-menu">
                 <span>1枚ドロー</span>
-                <img src={`${process.env.PUBLIC_URL}/draw.png`} alt="1ドロー" style={{ width: '1.5em', height: '1.5em', marginLeft:'0.5em'}}/>
+                <img src={`${process.env.PUBLIC_URL}/draw.png`} alt="1ドロー" style={{ width: '1.5em', height: '1.5em', marginLeft:'0.5em', opacity:'0.7'}}/>
                 </button>
               <button 
                 onClick={handleSendTopToGrave} 
@@ -512,7 +506,7 @@ export const FieldLayout: React.FC<FieldLayoutProps> = ({ initialGameState }) =>
                   <span>トップを墓地へ</span>
                   <img src={`${process.env.PUBLIC_URL}/grave.png`} 
                   alt="トップを墓地へ" 
-                  style={{ width: '1.5em', height: '1.5em', marginLeft:'0.5em'}}/>
+                  style={{ width: '1.5em', height: '1.5em', marginLeft:'0.5em',opacity:'0.7'}}/>
                 </button>
               <button onClick={handleShuffle} className="operation-button deck-menu">
                <span>シャッフル</span>

@@ -5,6 +5,7 @@ import { DeckImageCutter } from './components/DeckImageCutter';
 import { FieldLayout } from './components/FieldLayout';
 import { HamburgerMenu } from './components/HamburgerMenu'; 
 import { GuideModal } from './components/GuideModal'; 
+import { HistoryModal } from './components/HistoryModal';
 import './App.css';
 
 const emptyGameState: GameState = {
@@ -22,9 +23,17 @@ const emptyGameState: GameState = {
 };
 
 export default function App() {
-  const [gameStarted, setGameStarted] = useState(false);
+  // const [gameStarted, setGameStarted] = useState(false);
+ const [gameStarted, setGameStarted] = useState(() => {
+    // ページ読み込み時にlocalStorageにデータがあればtrue、なければfalseを返す
+    return localStorage.getItem('rushDuelGameState') !== null;
+  });
+
   const [initialState, setInitialState] = useState<GameState | null>(null);
-   const [isGuideOpen, setIsGuideOpen] = useState(false); 
+  const [isGuideOpen, setIsGuideOpen] = useState(false); 
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [deckCutterKey, setDeckCutterKey] = useState<number | null>(null);
+
 
   useEffect(() => {
     document.body.style.overscrollBehavior = 'none';
@@ -51,20 +60,23 @@ export default function App() {
         },
         cardStates: {},
     };
-    
     setInitialState(initialGameState);
     setGameStarted(true);
   };
 
   const handleResetApp = () => {
+      localStorage.removeItem('rushDuelGameState'); 
       setGameStarted(false);
       setInitialState(null);
+      setDeckCutterKey(Date.now());
   }
+
+
   // ★★★ メニュー項目を定義 ★★★
   const menuItems = [
     { label: '使い方ガイド', onClick: () => setIsGuideOpen(true) },
     { label: '別のデッキを読み込む', onClick: handleResetApp },
-    { label: '更新履歴', onClick: () => alert('更新履歴を表示します') },
+    { label: '更新履歴・Q&A', onClick: () => setIsHistoryOpen(true) },
     { label: 'Xでシェア', onClick: () => {
       // const text = encodeURIComponent('遊戯王ラッシュデュエル 一人回しツール');
       // const url = encodeURIComponent(window.location.href);
@@ -76,12 +88,13 @@ export default function App() {
     <>
     <div className="container">
       <GuideModal isOpen={isGuideOpen} onClose={() => setIsGuideOpen(false)} />
+      <HistoryModal isOpen={isHistoryOpen} onClose={() => setIsHistoryOpen(false)} />
       <main className="main-content">
         <div className="header">
             <HamburgerMenu items={menuItems} />
             <h1 className="title">遊戯王ラッシュデュエル 一人回しツール</h1>
             {!gameStarted ? (
-                <DeckImageCutter onCutComplete={handleCutComplete} />
+                <DeckImageCutter  key={deckCutterKey}  onCutComplete={handleCutComplete} />
             ) : (
               <>
                {/* <button onClick={handleResetApp} className="menu-button" 
@@ -97,9 +110,7 @@ export default function App() {
     </div>
     <footer>
       <p>
-        since 2025.
-        <span className="space"></span>
-        <span className="space"></span>
+        since 2025.08.06<br/>
         ※非公式ファンサイト（管理人：エシマ <a href='https://youmagure.wew.jp/profile.html' target='blank'>Profile Page</a>）
       </p>
     </footer>

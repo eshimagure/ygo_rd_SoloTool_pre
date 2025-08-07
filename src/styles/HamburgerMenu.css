@@ -75,7 +75,10 @@
   width: 100%;
   padding: 2rem 1.5rem;
   background: none;
-  border: none;
+  border-top: 1px solid #d1d5dd;
+  border-bottom: 1px solid #d1d5dd;
+  border-right: none;
+  border-left: none;
   text-align: left;
   font-size: 1.6rem;
   cursor: pointer;
@@ -106,8 +109,25 @@
   width: 7rem;
   height: 7rem;
 }
+.menu-nav {
+  width: 30rem;
+}
 .menu-nav li button {
   font-size: 2rem;
   font-weight: bold;
+  padding: 2.5rem 1rem;
+  /* margin: 2rem 0; */
 }
+}
+
+@media (prefers-color-scheme: dark) {
+  .Menu-button {
+  background: #777777;
+}
+  .menu-nav {
+  background-color: #444444;
+}
+  .menu-nav ul li button {
+    color: #dbdbdb;
+  }
 }

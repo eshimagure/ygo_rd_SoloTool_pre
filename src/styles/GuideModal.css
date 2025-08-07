@@ -3,7 +3,7 @@
  text-align: center;
 }
 .indent {
-  margin-left: 1rem;
+  margin-left: 16px;
 }
 .guide-modal-overlay {
   position: fixed;
@@ -45,7 +45,7 @@
 .guide-modal-close-button {
   background: none;
   border: none;
-  font-size: 25px;
+  font-size: 2rem;
   font-weight: bold;
   cursor: pointer;
   color: #6b7280;
@@ -59,7 +59,7 @@
 
 .guide-modal-content h3 {
   font-size: clamp(16px, 1.8rem, 18px);
-  margin-top: 1.5rem;
+  margin-top: 2rem;
   margin-bottom: 0.5rem;
 }
 
@@ -81,5 +81,23 @@
   width: 100%;
   border: 2px solid #c6c6c6;
   border-radius: 8px;
+}
+
+@media screen and (max-width: 680px) {
+  .guide-img {
+  width:40rem ;
+  }
+  .guide-img-mini {
+  width:20rem ;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+.guide-modal {
+  background: #444444;
+}
+.guide-modal-close-button {
+  color: #c6c6c6;
+}
 }
 

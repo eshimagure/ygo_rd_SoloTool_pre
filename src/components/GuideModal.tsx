@@ -22,8 +22,10 @@ export const GuideModal: React.FC<GuideModalProps> = ({ isOpen, onClose }) => {
         </div>
         <div className="guide-modal-content">
           <h3>1. デッキの読み込み</h3>
-          <p><span className="indent"></span>ニューロンからデッキの「画像共有」から作成した画像をアップロードしてください。自動的にカードが切り出されます。<br/>
-          ※トリミング等の加工をした画像・他の形式のデッキ画像は読み込めません。
+          <p><span className="indent"></span>ニューロンからデッキの「画像共有」で作成した画像をアップロードします。（日本語以外のデッキレシピもOK）<br/>
+          <span className="indent"></span>枚数が正しければ「この枚数で切り出しを実行」ボタンをクリックして下さい。<br/>
+          <span className="indent"></span>相違している場合は任意のカード枚数を記入後、切り出し実行ボタンをクリックして下さい。<br/>
+          ※トリミング等の加工をした画像・他の形式のデッキ画像は正しく切り出せません。
           </p>
           <div className="guide-img">
             <img src={`${process.env.PUBLIC_URL}/images/000.jpg`} alt="説明画像01"/>
@@ -70,7 +72,7 @@ export const GuideModal: React.FC<GuideModalProps> = ({ isOpen, onClose }) => {
           <h3>6. 各種機能</h3>
           <p><span className="indent"></span>画面上部のメニューボタンから、リセット（デッキ読み込み直後の状態になります）、操作の巻き戻し（戻る）、サイコロ、コイントスなどの補助機能を利用できます。</p>
 
-           <h3>補足事項</h3>
+           <h3>※補足事項</h3>
           <p><span className="indent"></span>ページから離れていてもカード情報を保持する設定をしているため、<b>ページをリロードしてもデッキはリセットされません。</b><br/>
           <span className="indent"></span>新しくデッキを読み込む場合はサイドメニューの「別のデッキを読み込む」からお願いします。
           </p>

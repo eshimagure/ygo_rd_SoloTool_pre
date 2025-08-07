@@ -1,0 +1,104 @@
+.history-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 4000;
+}
+
+.history-modal {
+  background: #eeeeee;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.25);
+  width: 90%;
+  max-width: 700px; /* 少し幅を広めに設定 */
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  font-size: 15px;
+}
+
+.history-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.history-modal-header h2 {
+  margin: 0;
+  font-size: clamp(16px, 2rem, 20px);
+}
+
+.history-modal-close-button {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  font-weight: bold;
+  cursor: pointer;
+  color: #6b7280;
+  padding: 0 0.5rem;
+}
+
+.history-modal-content {
+  scroll-behavior: smooth; 
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+.modal-nav-links {
+  display: flex;
+  gap: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.modal-nav-links a {
+  text-decoration: none;
+  font-weight: bold;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  color: #d0a1a1;
+  transition: background-color 0.2s;
+}
+
+.modal-nav-links a:hover {
+  background-color: #f3f4f6;
+}
+
+.history-modal-content hr {
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  margin: 1.5rem 0;
+}
+
+.history-modal-content section h3 {
+  font-size: clamp(16px, 1.8rem, 18px);
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+
+.history-modal-content section p {
+  font-size: 16px;
+  margin-top: 0;
+}
+
+.history-modal-content section ul {
+  padding-left: 20px;
+  margin: 0.5rem 0 2rem;
+}
+
+@media (prefers-color-scheme: dark) {
+.history-modal {
+  background: #444444;
+}
+.history-modal-close-button {
+  color: #c6c6c6;
+}
+}

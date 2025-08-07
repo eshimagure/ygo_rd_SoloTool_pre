@@ -28,12 +28,18 @@ export const FieldZones: React.FC<FieldZonesProps> = ({ id, children, cards = []
   const { setNodeRef, isOver } = useSortable({ id });
   const { width } = useWindowSize();
   const isMonsterZone = id.startsWith('monster');
-   const zoneIdClass = `zone--${id.split(/[0-9]/)[0]}`; // monster1,2,3をmonsterにまとめる
+  const zoneIdClass = `zone--${id.split(/[0-9]/)[0]}`; // monster1,2,3をmonsterにまとめる
 
+  // const zoneStyle: React.CSSProperties = {
+  //   backgroundColor: isOver ? '#eef2ff' : '',
+  //   borderColor: isOver ? '#6366f1' : '',
+  //   gridArea: id,
+  // };
 
-  const zoneStyle: React.CSSProperties = {
-    backgroundColor: isOver ? '#eef2ff' : '',
-    borderColor: isOver ? '#6366f1' : '',
+   const zoneStyle: React.CSSProperties = {
+    // isOverがtrueの時、--zone-bg-over 変数を適用する
+    backgroundColor: isOver ? 'var(--zone-bg-over)' : '',
+    borderColor: isOver ? 'var(--zone-border-over)' : '',
     gridArea: id,
   };
 
