@@ -5,7 +5,7 @@ import { DeckImageCutter } from './components/DeckImageCutter';
 import { FieldLayout } from './components/FieldLayout';
 import { HamburgerMenu } from './components/HamburgerMenu'; 
 import { GuideModal } from './components/GuideModal'; 
-import { HistoryModal } from './components/HistoryModal';
+import { InfoModal } from './components/InfoModal';
 import './App.css';
 
 const emptyGameState: GameState = {
@@ -31,7 +31,7 @@ export default function App() {
 
   const [initialState, setInitialState] = useState<GameState | null>(null);
   const [isGuideOpen, setIsGuideOpen] = useState(false); 
-  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [isInfoOpen, setIsInfoOpen] = useState(false); 
   const [deckCutterKey, setDeckCutterKey] = useState<number | null>(null);
 
 
@@ -76,11 +76,11 @@ export default function App() {
   const menuItems = [
     { label: '使い方ガイド', onClick: () => setIsGuideOpen(true) },
     { label: '別のデッキを読み込む', onClick: handleResetApp },
-    { label: '更新履歴・Q&A', onClick: () => setIsHistoryOpen(true) },
+    { label: '利用規約・Q&A・更新履歴', onClick: () => setIsInfoOpen(true) },
     { label: 'Xでシェア', onClick: () => {
-      // const text = encodeURIComponent('遊戯王ラッシュデュエル 一人回しツール');
-      // const url = encodeURIComponent(window.location.href);
-      // window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`);
+      const text = encodeURIComponent('遊戯王ラッシュデュエル 一人回しツール Pre版');
+      const url = encodeURIComponent(window.location.href);
+      window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`);
     }},
   ];
 
@@ -88,11 +88,11 @@ export default function App() {
     <>
     <div className="container">
       <GuideModal isOpen={isGuideOpen} onClose={() => setIsGuideOpen(false)} />
-      <HistoryModal isOpen={isHistoryOpen} onClose={() => setIsHistoryOpen(false)} />
+      <InfoModal isOpen={isInfoOpen} onClose={() => setIsInfoOpen(false)} />
       <main className="main-content">
         <div className="header">
-            <HamburgerMenu items={menuItems} />
-            <h1 className="title">遊戯王ラッシュデュエル 一人回しツール</h1>
+          <HamburgerMenu items={menuItems} />
+          <h1 className="title">遊戯王ラッシュデュエル 一人回しツール</h1>
             {!gameStarted ? (
                 <DeckImageCutter  key={deckCutterKey}  onCutComplete={handleCutComplete} />
             ) : (
@@ -110,7 +110,7 @@ export default function App() {
     </div>
     <footer>
       <p>
-        since 2025.08.06<br/>
+        since 2025.08.17<br/>
         ※非公式ファンサイト（管理人：エシマ <a href='https://youmagure.wew.jp/profile.html' target='blank'>Profile Page</a>）
       </p>
     </footer>

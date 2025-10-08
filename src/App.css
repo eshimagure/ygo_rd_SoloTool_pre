@@ -35,8 +35,8 @@ body {
   /* width: 100vw; */
   max-width: 756px;
   padding: 0rem;
-  display: flex; /* ★★★ Flexboxコンテナにする ★★★ */
-  justify-content: center; /*  水平方向の中央寄せ ★★★ */
+  display: flex;
+  justify-content: center;
   margin: 0 auto;
 }
 
@@ -146,6 +146,12 @@ height: 95%;
   cursor: grab;
   touch-action: none;
   transition: transform 0.2s ease-in-out, filter 0.2s ease-in-out, opacity 0.2s ease-in-out;
+}
+/* カード画像上で長押しした際のメニューを無効化する */
+.card img {
+  -webkit-touch-callout: none; /* iOS Safari用 */
+  user-select: none;           /* テキスト選択なども防ぐ */
+  pointer-events: none;        /* 画像自体へのポインタイベントを無効化 */
 }
 /* デフォルトのカラーテーマ（ライトモード） */
 :root {
@@ -404,10 +410,8 @@ height: 95%;
   background: none;
   border: none;
   color: #6b7280;
-  /* font-size: clamp(16px, 2rem, 20px); */
   font-weight: bold;
   cursor: pointer;
-  height: 2rem;
 }
 
 .popup-content {
@@ -513,6 +517,10 @@ footer  a:hover {
   .zone--deck .card {
     height: 7.5rem;
   }
+  .zone--free .card {
+    height: 9rem;
+  }
+
   .popup-overlay {
   width: 220%;
 }
@@ -543,22 +551,7 @@ footer  a:hover {
   .zone--extra .card {
     height: 8.5rem;
   }
-  /* .zone--deck .card {
-    height: 7.2rem;
-  } */
-  /* .top-menu {
-  padding:0.5rem 0.6rem;
-  margin: 0.8rem;
-  font-weight: bold;
-  width: fit-content;
-  }
 
-  .deck-menu {
-  padding:0.6rem 0.5rem;
-  margin:0.8rem;
-  font-weight: bold;
-  width:fit-content;
-  } */
   .operation-button{
   padding:0.5rem 0.3rem;
   margin: 0.8rem;
@@ -572,7 +565,6 @@ footer  a:hover {
 
 @media screen and (max-width: 400px) {
   html {
-    /* スマートフォンでの基準サイズ */
     font-size: 6.2px;
   }
   .popup-overlay {
@@ -606,6 +598,9 @@ footer  a:hover {
   .zone--extra .card {
     height: 7.2rem;
   }
+    .zone--free .card {
+    height: 8rem;
+  }
 }
 @media screen and (max-width: 335px) {
   .display {
@@ -613,7 +608,7 @@ footer  a:hover {
 } 
 }
 
-/* ダークモード */
+/* ///// ダークモード ///// */
 @media (prefers-color-scheme: dark) {
   body {
     background-color: #444444;
@@ -718,7 +713,8 @@ footer  a:hover {
 .popup-content { 
   background-color: #4f4949;
 }
-.close-button {
+.close-button,
+.popup-title {
   color: #dbdbdb;
 }
 }

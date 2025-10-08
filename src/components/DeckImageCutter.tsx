@@ -302,11 +302,14 @@ export const DeckImageCutter: React.FC<DeckImageCutterProps> = ({ onCutComplete 
     </div> */}
        {/* ★★★ showManualInputがfalseの場合のみファイル選択を表示 ★★★ */}
       {!isOcrComplete  && (
+        <>
         <input type="file" accept="image/*" onChange={handleImageUpload} disabled={!isTesseractReady} style={{
           padding: '10px',
           borderRadius: '6px',
           border: '1px solid #d1d5db',
           cursor: 'pointer'}}/>
+        <div style={{ fontSize: 'clamp(12px, 1.5rem, 16px)' }}>{status}</div>
+        </>
       )}
 
           {/* ★★★ 手動モード開始時に画像未選択の場合のメッセージを追加 ★★★ */}

@@ -23,8 +23,6 @@ export const GuideModal: React.FC<GuideModalProps> = ({ isOpen, onClose }) => {
         <div className="guide-modal-content">
           <h3>1. デッキの読み込み</h3>
           <p><span className="indent"></span>ニューロンからデッキの「画像共有」で作成した画像をアップロードします。（日本語以外のデッキレシピもOK）<br/>
-          <span className="indent"></span>枚数が正しければ「この枚数で切り出しを実行」ボタンをクリックして下さい。<br/>
-          <span className="indent"></span>相違している場合は任意のカード枚数を記入後、切り出し実行ボタンをクリックして下さい。<br/>
           ※トリミング等の加工をした画像・他の形式のデッキ画像は正しく切り出せません。
           </p>
           <div className="guide-img">
@@ -34,9 +32,17 @@ export const GuideModal: React.FC<GuideModalProps> = ({ isOpen, onClose }) => {
             <img src={`${process.env.PUBLIC_URL}/images/001.jpg`} alt="説明画像02"/>
           </div>
           <p className="text-center"><b>デッキ画像例</b></p>
-          
+          <p><span className="indent"></span>枚数が正しければ「この枚数で切り出しを実行」ボタンをクリックして下さい。<br/>
+          <span className="indent"></span>相違している場合は任意のカード枚数を記入後、切り出し実行ボタンをクリックして下さい。
+          </p>
+          <div className="guide-img">
+            <img src={`${process.env.PUBLIC_URL}/images/010.jpg`} alt="説明画像10"/>
+          </div>
+          <p><span className="indent"></span>エクストラなし、サイドありの場合はサイドデッキがエクストラとして判定されます。<br/>
+          <span className="indent"></span>この場合はエクストラ「0」枚と入力後、切り出し実行ボタンをクリックして下さい。
+          </p>
            <h3>2. カードの操作</h3>
-          <p>フィールド上のカードは、ドラッグ＆ドロップで好きなゾーンへ移動できます。手札やデッキ、墓地のカードも同様に移動可能です。</p>
+          <p><span className="indent"></span>フィールド上のカードは、ドラッグ＆ドロップで好きなゾーンへ移動できます。手札やデッキ、墓地のカードも同様に移動可能です。</p>
           <div className="guide-img">
             <img src={`${process.env.PUBLIC_URL}/images/002.jpg`} alt="説明画像03"/>
           </div>
