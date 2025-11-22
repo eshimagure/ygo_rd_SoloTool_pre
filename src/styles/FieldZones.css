@@ -5,7 +5,6 @@
   gap: 8px;
   margin: 2rem auto;
   justify-content: center;
-  /* align-items: center; */
 }
 
 .zone {
@@ -16,7 +15,6 @@
   justify-content: center;
   font-size: 0.9rem;
   text-align: center;
-  /* padding: 0.5rem; */
 }
 
 .zone img {

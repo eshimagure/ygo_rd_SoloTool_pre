@@ -20,6 +20,7 @@ export const GuideModal: React.FC<GuideModalProps> = ({ isOpen, onClose }) => {
           <h2>使い方ガイド</h2>
           <button onClick={onClose} className="guide-modal-close-button">×</button>
         </div>
+
         <div className="guide-modal-content">
           <h3>1. デッキの読み込み</h3>
           <p><span className="indent"></span>ニューロンからデッキの「画像共有」で作成した画像をアップロードします。（日本語以外のデッキレシピもOK）<br/>
@@ -35,6 +36,7 @@ export const GuideModal: React.FC<GuideModalProps> = ({ isOpen, onClose }) => {
           <p><span className="indent"></span>枚数が正しければ「この枚数で切り出しを実行」ボタンをクリックして下さい。<br/>
           <span className="indent"></span>相違している場合は任意のカード枚数を記入後、切り出し実行ボタンをクリックして下さい。
           </p>
+          <br/>
           <div className="guide-img">
             <img src={`${process.env.PUBLIC_URL}/images/010.jpg`} alt="説明画像10"/>
           </div>
@@ -55,7 +57,7 @@ export const GuideModal: React.FC<GuideModalProps> = ({ isOpen, onClose }) => {
             <img src={`${process.env.PUBLIC_URL}/images/005.jpg`} alt="説明画像06"/>
           </div>
           
-          <h3>4. 墓地</h3>
+          <h3 id='four'>4. 墓地</h3>
           <p><span className="indent"></span>墓地のボタンをクリックすると、ポップアップで墓地の中身を確認できます。ポップアップ内のカードも同様に移動可能です。</p>
            <div className="guide-img">
             <img src={`${process.env.PUBLIC_URL}/images/006.jpg`} alt="説明画像07"/>
@@ -76,10 +78,19 @@ export const GuideModal: React.FC<GuideModalProps> = ({ isOpen, onClose }) => {
           </div>
 
           <h3>6. 各種機能</h3>
-          <p><span className="indent"></span>画面上部のメニューボタンから、リセット（デッキ読み込み直後の状態になります）、操作の巻き戻し（戻る）、サイコロ、コイントスなどの補助機能を利用できます。</p>
+          <p><span className="indent"></span>画面上部のメニューボタンから、リセット、操作の巻き戻し（戻る）、サイコロ、コイントスなどの補助機能を利用できます。</p>
+
+          <h3>7. リセット機能</h3>
+          <div className="guide-img">
+          <img src={`${process.env.PUBLIC_URL}/images/011.jpg`} alt="説明画像09"/>
+          </div>
+          <p><span className="indent"></span>リセットボタンをクリックするとポップアップ表示が出ます。2種類のリセット方法があるので、実行する方のボタンをクリックして下さい。<br/>
+          <strong className='red'>初期状態に戻す</strong>：デッキを読み込んだ直後の状態にリセットします。<br/>
+         <strong className='red'>シャッフルしてリセット</strong>：デッキをシャッフルし、新たな手札4枚でリセットします。
+          </p>
 
            <h3>※補足事項</h3>
-          <p><span className="indent"></span>ページから離れていてもカード情報を保持する設定をしているため、<b>ページをリロードしてもデッキはリセットされません。</b><br/>
+          <p><span className="indent"></span>ページから離れていてもカード情報を保持する設定をしているため、<strong className='red'>ページをリロードしてもデッキはリセットされません。</strong><br/>
           <span className="indent"></span>新しくデッキを読み込む場合はサイドメニューの「別のデッキを読み込む」からお願いします。
           </p>
         </div>

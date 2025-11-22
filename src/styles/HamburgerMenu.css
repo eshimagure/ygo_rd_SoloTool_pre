@@ -99,6 +99,7 @@
   z-index: 3000;
 }
 
+/* レスポンシブレイアウト */
 @media screen and (max-width: 767px) {
   .menu-container {
   position: absolute;
@@ -116,10 +117,10 @@
   font-size: 2rem;
   font-weight: bold;
   padding: 2.5rem 1rem;
-  /* margin: 2rem 0; */
 }
 }
 
+/* ダークモードレイアウト */
 @media (prefers-color-scheme: dark) {
   .Menu-button {
   background: #777777;

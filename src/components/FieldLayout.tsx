@@ -1,11 +1,10 @@
 // src/components/FieldLayout.tsx
-import React, { useState, useEffect, useMemo } from 'react'; //, useMemo
+import React, { useState, useEffect, useMemo } from 'react'; 
 import {
   DndContext,
   useSensor,
   useSensors,
   PointerSensor,
-  // TouchSensor,
   DragOverlay,
   closestCenter,
   pointerWithin,
@@ -27,30 +26,41 @@ interface FieldLayoutProps {
   initialGameState: GameState;
 }
 
+/**
+ * ゲーム盤面全体のレイアウトとロジックを管理するメインコンポーネント
+ * - ゲーム状態(gameState)の管理
+ * - ドラッグ＆ドロップ(dnd-kit)の処理
+ * - 各種ゲーム操作（ドロー、リセットなど）のハンドラ
+ * - ポップアップやコンテキストメニューの表示制御
+ */
+
 export const FieldLayout: React.FC<FieldLayoutProps> = ({ initialGameState }) => {
-  const { width } = useWindowSize(); // 既存のフックを再利用
-  const [history, setHistory] = useState<GameState[]>([]);
-  const [activeCard, setActiveCard] = useState<Card | null>(null);
-  const [hoveredCardId, setHoveredCardId] = useState<string | null>(null);
-  const [contextMenu, setContextMenu] = useState<{ x: number, y: number, cardId: string, location: string } | null>(null);
-  const [showGravePopup, setShowGravePopup] = useState(false);
-   const [resultPopupContent, setResultPopupContent] = useState<string | null>(null);
-    // 1. 初期化ロジック: localStorageからデータを読み込む
+  // State定義
+  const { width } = useWindowSize(); // レスポンシブ対応のためのカスタムフック 画面幅の管理
+  const [history, setHistory] = useState<GameState[]>([]); // 操作履歴（「戻る」機能用）
+  const [activeCard, setActiveCard] = useState<Card | null>(null); // D&D中にドラッグしているカード
+  const [hoveredCardId, setHoveredCardId] = useState<string | null>(null); // ホバー中のカードID
+  const [contextMenu, setContextMenu] = useState<{ x: number, y: number, cardId: string, location: string } | null>(null); // コンテキストメニュー
+  const [showGravePopup, setShowGravePopup] = useState(false); // 墓地ポップアップ
+  const [resultPopupContent, setResultPopupContent] = useState<string | null>(null); // サイコロ・コイン結果
+  const [isResetPopupOpen, setIsResetPopupOpen] = useState(false); // リセット確認ポップアップの表示状態を管理するstate
+
+  // 1. 初期化ロジック: localStorageからデータを読み込む
+  //  関数を渡すことで、高コストなlocalStorageの読み取りを初回マウント時のみ実行
   const [gameState, setGameState] = useState<GameState>(() => {
     try {
       const savedState = localStorage.getItem('rushDuelGameState');
       if (savedState) {
-        // 保存されたデータがあれば、それを使って初期化
-        return JSON.parse(savedState);
+        return JSON.parse(savedState);  // 保存されたデータがあれば、それを使って初期化
       }
     } catch (error) {
       console.error("Failed to parse saved state:", error);
     }
-    // 保存されたデータがなければ、propsの初期値を使う
-    return initialGameState;
+    return initialGameState; // 保存されたデータがなければ、propsの初期値を使う
   });
 
- // 2. 保存ロジック: gameStateが変更されるたびにlocalStorageに保存する
+  // 2. 保存ロジック: gameStateが変更されるたびにlocalStorageに保存する
+  //ページから離れていても盤面の状態を保持しておきたい
   useEffect(() => {
     // gameStateが空でない場合のみ保存（初期化直後などを除く）
     if (gameState && gameState.deck.length > 0) {
@@ -60,23 +70,18 @@ export const FieldLayout: React.FC<FieldLayoutProps> = ({ initialGameState }) =>
 
   // 3. propsの初期値が変更された場合（新しいデッキを読み込んだ場合）の処理
   useEffect(() => {
-    // initialGameStateが空でない（＝新しいデッキが読み込まれた）場合、
-    // gameStateを新しい初期値で上書きする
+    // initialGameStateが空でない（＝新しいデッキが読み込まれた）場合、gameStateを上書き
     if (initialGameState && initialGameState.deck.length > 0) {
       setGameState(initialGameState);
     }
   }, [initialGameState]);
 
+  // D&Dセンサー（PointerSensor: マウス、タッチ、ペンを統合）
   const sensors = useSensors(
     useSensor(PointerSensor),
-    // useSensor(TouchSensor, {
-    //   activationConstraint: {
-    //     delay: 150,
-    //     tolerance: 30,
-    //   },
-    // })
   );
 
+  // D&Dの衝突検出戦略（ポインター位置を優先し、なければ最も近い中央を検出）
   const collisionDetectionStrategy: CollisionDetection = (args) => {
     const pointerCollisions = pointerWithin(args);
     if (pointerCollisions.length > 0) {
@@ -85,29 +90,53 @@ export const FieldLayout: React.FC<FieldLayoutProps> = ({ initialGameState }) =>
     return closestCenter(args);
   };
 
+  // 操作履歴を保存
   const saveHistory = () => setHistory(prev => [...prev, gameState]);
+  // 操作を1つ戻す
   const undo = () => {
     if (history.length === 0) return;
     const lastState = history[history.length - 1];
     setGameState(lastState);
     setHistory(prev => prev.slice(0, -1));
   };
-  // const resetGame = () => {
-  //     if (window.confirm("デッキを読み込んだ直後の状態にリセットします。よろしいですか？")) {
-  //     setGameState(initialGameState);
-  //     setHistory([]);
-  //   }
-  // };
 
-  const resetGame = () => {
-     if (window.confirm("デッキを読み込んだ直後の状態にリセットします。よろしいですか？")) {
-    // ★★★ リセット時にlocalStorageもクリアする ★★★
-    // localStorage.removeItem('rushDuelGameState'); 
-    setGameState(initialGameState);
-    setHistory([]);
-     }
+  // リセット用ポップアップを開く
+  const openResetPopup = () => {
+    setIsResetPopupOpen(true);
+  };
+
+//////////////// デッキのリセット関数 ////////////////
+  // 種類1: 完全に初期状態に戻すリセット
+  const handleFullReset = () => {
+      setGameState(initialGameState);
+      setHistory([]);
+      setIsResetPopupOpen(false); // ポップアップを閉じる
+  };
+
+  // 種類2: デッキをシャッフルして新しい手札で始めるリセット
+  const handleShuffleReset = () => {
+      // initialGameStateをベースに新しい状態を作成
+      const originalDeck = [...initialGameState.deck, ...initialGameState.hand];
+      const shuffledDeck = originalDeck.sort(() => Math.random() - 0.5);
+      
+      const newHand = shuffledDeck.slice(0, 4);
+      const newDeck = shuffledDeck.slice(4);
+
+      const newShuffledState: GameState = {
+        ...initialGameState, // 墓地、EX、フリーゾーンなどは初期状態を引き継ぐ
+        deck: newDeck,
+        hand: newHand,
+        cardStates: {}, // カードの状態はリセット
+      };
+      
+      setGameState(newShuffledState);
+      setHistory([]);
+      setIsResetPopupOpen(false); // ポップアップを閉じる
+    // }
   };
   
+//////////////// D&D処理 ////////////////
+  // カードIDから、そのカードが存在するゾーン名（コンテナID）を検索
   const findCardLocation = (cardId: string): string | null => {
       const arrayZones: ArrayZoneName[] = ['deck', 'hand', 'grave', 'extra', 'free'];
       for (const zone of arrayZones) {
@@ -118,81 +147,90 @@ export const FieldLayout: React.FC<FieldLayoutProps> = ({ initialGameState }) =>
       }
       return null;
   };
-  
+
+  // ドラッグ開始時の処理
   const handleDragStart = (event: DragStartEvent) => {
     const cardId = String(event.active.id);
+    // 全ゾーンからドラッグしたカードの情報を検索
     const card = 
         [...gameState.deck, ...gameState.hand, ...gameState.grave, ...gameState.extra, ...gameState.free, ...Object.values(gameState.zones).filter(Boolean)]
         .find(c => c && c.id === cardId);
-    setActiveCard(card || null);
+    setActiveCard(card || null); // activeCardにセット
   };
 
+  // ドラッグ終了時の処理
+  // ドラッグ処理した・しない。ドラッグ先の場所、ドラッグ先のカードの有無によって終了時の処理が変わるため複雑化している
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
-    setActiveCard(null);
-    if (!over) return;
+    setActiveCard(null); //ドラッグ中カードをリセット
+    if (!over) return; //ドロップ先がなければ何もしない
     
     const activeId = String(active.id);
     const overId = String(over.id);
 
-    if (activeId === overId) return;
-
-    saveHistory();
+    if (activeId === overId) return; // 同じ場所なら何もしない
+    saveHistory(); // 状態変更前に履歴を保存
     setGameState(prev => {
+        // 1. ドラッグ元(from)とドロップ先(to)のコンテナIDを特定
         const fromContainer = findCardLocation(activeId);
         const toContainer = findCardLocation(overId) || overId;
         
-        if (!fromContainer) return prev;
+        if (!fromContainer) return prev; // ドラッグ元不明なら何もしない
 
+        // 2. シングルカードゾーン（モンスター/魔法/フィールド）へのドロップ処理
         const singleCardZoneIds = ['field', 'monster1', 'monster2', 'monster3', 'spell1', 'spell2', 'spell3'];
         if (singleCardZoneIds.includes(toContainer) && prev.zones[toContainer as keyof typeof prev.zones]) {
-            return prev;
+            return prev; // 既にカードがあればドロップ不可
         }
         
+        // 3. コンテナが配列か（deck, handなど）、シングルゾーンか（monster1など）を判別
         const arrayContainers: ArrayZoneName[] = ['deck', 'hand', 'grave', 'extra', 'free'];
         const isFromContainerArray = arrayContainers.includes(fromContainer as ArrayZoneName);
         const isToContainerArray = arrayContainers.includes(toContainer as ArrayZoneName);
 
+        // 4. 同一配列内での並び替え処理 (例: 手札内の並び替え)
         if (fromContainer === toContainer && isFromContainerArray) {
             const containerKey = fromContainer as ArrayZoneName;
             const oldIndex = prev[containerKey].findIndex(c => c.id === activeId);
             const newIndex = prev[containerKey].findIndex(c => c.id === overId);
             
             if (oldIndex !== -1 && newIndex !== -1) {
-                const newState = JSON.parse(JSON.stringify(prev));
+                const newState = JSON.parse(JSON.stringify(prev)); // 簡易ディープコピー
                 newState[containerKey] = arrayMove(prev[containerKey], oldIndex, newIndex);
                 return newState;
             }
         }
 
+        // 5. 異なるコンテナ間でのカード移動処理
         const newState = JSON.parse(JSON.stringify(prev));
         const card = [...prev.deck, ...prev.hand, ...prev.grave, ...prev.extra, ...prev.free, ...Object.values(prev.zones).filter(Boolean)].find(c => c && c.id === activeId);
         if (!card) return prev;
 
-     // もしカードがシングルカードゾーンから移動された場合、そのカードの状態をリセットする
+        // 5a もしカードが移動された場合、そのカード状態（向きなど）をリセット
         if (singleCardZoneIds.includes(fromContainer)) {
             newState.cardStates[activeId] = { rotation: 0, hidden: false };
         }
-
+        // 5b. ドラッグ元のコンテナからカードを削除
         if (isFromContainerArray) {
             const containerKey = fromContainer as ArrayZoneName;
             newState[containerKey] = newState[containerKey].filter((c: Card) => c.id !== activeId);
         } else {
             newState.zones[fromContainer as keyof typeof newState.zones] = null;
         }
-
+        // 5c. ドロップ先のコンテナにカードを追加
         if (isToContainerArray) {
             const containerKey = toContainer as ArrayZoneName;
             const targetArray: Card[] = newState[containerKey];
             const overIsCard = findCardLocation(overId) === containerKey;
-
+            // デッキへのドロップは特殊処理（デッキへ戻す順番など、ルールに従う必要があるため）
             if (containerKey === 'deck') {
                 if (overIsCard) {
-                    targetArray.unshift(card);
+                    targetArray.unshift(card); // カードの上ならデッキトップへ
                 } else {
-                    targetArray.push(card);
+                    targetArray.push(card); // ゾーンにならデッキボトムへ
                 }
             } else {
+                // 他の配列ゾーンでは、ドロップ先のカードの直後に追加
                 const overIndex = targetArray.findIndex((c: Card) => c.id === overId);
                 if (overIndex !== -1) {
                      targetArray.splice(overIndex + 1, 0, card);
@@ -201,6 +239,7 @@ export const FieldLayout: React.FC<FieldLayoutProps> = ({ initialGameState }) =>
                 }
             }
         } else {
+            // シングルカードゾーンへのドロップ
             newState.zones[toContainer as keyof typeof newState.zones] = card;
             // 新しいゾーンに置かれたカードの状態も初期化
             newState.cardStates[card.id] = { rotation: 0, hidden: false };
@@ -209,6 +248,8 @@ export const FieldLayout: React.FC<FieldLayoutProps> = ({ initialGameState }) =>
     });
   };
 
+//////////////// デッキ操作ハンドラ ////////////////
+  // 指定枚数ドロー
   const handleDraw = (count: number) => {
     if (gameState.deck.length < count) return;
     saveHistory();
@@ -218,17 +259,31 @@ export const FieldLayout: React.FC<FieldLayoutProps> = ({ initialGameState }) =>
     });
   };
 
+  // 通常ドロー （手札が5枚未満なら5枚になるまで、5枚以上なら1枚）
+  const handleSmartDraw = () => {
+    const currentHandSize = gameState.hand.length;
+    if (currentHandSize < 5) {
+      // 手札が5枚になるまでドロー
+      const cardsToDraw = 5 - currentHandSize;
+      handleDraw(cardsToDraw);
+    } else {
+      // 手札が5枚以上なら1枚ドロー
+      handleDraw(1);
+    }
+  };
+
+  // デッキシャッフル ////////// 
   const handleShuffle = () => {
+    //ボタン誤クリック防止のためconfirmで確認
      if (window.confirm("デッキをシャッフルしますか？")) {
       saveHistory();
       setGameState(prev => ({ ...prev, deck: [...prev.deck].sort(() => Math.random() - 0.5) }));
     }
   };
 
-  // ★★★★★ ここから追加 ★★★★★
+  // フリースペースのカードをデッキトップへ
   const handleReturnFreeToTop = () => {
     if (gameState.free.length === 0) return; // フリーゾーンが空なら何もしない
-
     saveHistory();
     setGameState(prev => ({
       ...prev,
@@ -239,6 +294,7 @@ export const FieldLayout: React.FC<FieldLayoutProps> = ({ initialGameState }) =>
     }));
   };
 
+  // フリースペースのカードをデッキボトムへ
   const handleReturnFreeToBottom = () => {
     if (gameState.free.length === 0) return; // フリーゾーンが空なら何もしない
 
@@ -251,8 +307,8 @@ export const FieldLayout: React.FC<FieldLayoutProps> = ({ initialGameState }) =>
       free: [],
     }));
   };
-  // ★★★★★ ここまで追加 ★★★★★
-  
+
+  // デッキトップを墓地へ
   const handleSendTopToGrave = () => {
     if (gameState.deck.length === 0) return;
     saveHistory();
@@ -262,36 +318,21 @@ export const FieldLayout: React.FC<FieldLayoutProps> = ({ initialGameState }) =>
     });
   };
 
-  // const handleDiceRoll = () => {
-  //   setIsLoading(true);
-  //   setDiceResult(null);
-  //   setCoinResult(null);
-  //   setTimeout(() => {
-  //       setDiceResult(Math.floor(Math.random() * 6) + 1);
-  //       setIsLoading(false);
-  //   }, 1000);
-  // };
-
-  // const handleCoinFlip = () => {
-  //   setIsLoading(true);
-  //   setDiceResult(null);
-  //   setCoinResult(null);
-  //   setTimeout(() => {
-  //       setCoinResult(Math.random() < 0.5 ? '表' : '裏');
-  //       setIsLoading(false);
-  //   }, 1000);
-  // };
+////////// ユーティリティの機能 ////////// 
+  //サイコロ
     const handleDiceRoll = () => {
     const result = Math.floor(Math.random() * 6) + 1;
     setResultPopupContent(`サイコロの目は「${result}」です`);
   };
-
+  //コイン
   const handleCoinFlip = () => {
     const result = Math.random() < 0.5 ? '表' : '裏';
     setResultPopupContent(`コインの結果は「${result}」です`);
   };
 
 
+////////// フィールド上のカード画像コンテキストメニュー表示関連 ////////// 
+  // メニュー表示（PCの右クリック / スマホのダブルタップ）
   const handleContextMenu = (e: React.MouseEvent | React.TouchEvent, cardOrZoneId: Card | string) => {
     e.preventDefault();
     e.stopPropagation();
@@ -314,17 +355,18 @@ export const FieldLayout: React.FC<FieldLayoutProps> = ({ initialGameState }) =>
     if (!cardId) return;
     const location = findCardLocation(cardId);
     if (!location || ['deck', 'hand', 'grave', 'extra', 'free'].includes(location)) return;
-
     setContextMenu({ x, y, cardId, location });
   };
-  // ★★★★★ ここまで修正 ★★★★★
 
+  // メニューを閉じる
   const closeContextMenu = () => setContextMenu(null);
   useEffect(() => {
     document.addEventListener('click', closeContextMenu);
     return () => document.removeEventListener('click', closeContextMenu);
   }, []);
 
+  // 表示形式のトグル（攻撃/守備、表/裏）
+  // モンスター / 魔法・罠カードかによって分岐が異なる
   const toggleDisplayMode = () => {
     if (!contextMenu) return;
     saveHistory();
@@ -333,13 +375,17 @@ export const FieldLayout: React.FC<FieldLayoutProps> = ({ initialGameState }) =>
         const newState = JSON.parse(JSON.stringify(prev));
         const cardState = newState.cardStates[cardId] || { rotation: 0, hidden: false };
         
+        //モンスターゾーン
         if (location.startsWith('monster')) {
-            if (cardState.hidden) {
+            if (cardState.hidden) { 
+                // 裏なら表攻撃
                 cardState.rotation = 0;
                 cardState.hidden = false;
-            } else if (cardState.rotation === 0) {
+            } else if (cardState.rotation === 0) { 
+                // 表攻撃なら表守備
                 cardState.rotation = -90;
             } else {
+                // 表守備なら表攻撃
                 cardState.rotation = 0;
             }
         } else if (location.startsWith('field') || location.startsWith('spell')) {
@@ -352,6 +398,7 @@ export const FieldLayout: React.FC<FieldLayoutProps> = ({ initialGameState }) =>
     closeContextMenu();
   };
 
+  // 裏側守備表示にセット
   const setFaceDownDefense = () => {
     if (!contextMenu) return;
     saveHistory();
@@ -359,24 +406,30 @@ export const FieldLayout: React.FC<FieldLayoutProps> = ({ initialGameState }) =>
     setGameState(prev => ({ ...prev, cardStates: { ...prev.cardStates, [cardId]: { rotation: -90, hidden: true } } }));
     closeContextMenu();
   };
-  
+
+  // カードIDから現在の状態（向き、裏表）を取得
   const getCardState = (cardId: string): CardState => gameState.cardStates[cardId] || { rotation: 0, hidden: false };
 
+  // dnd-kitのSortableContextに渡す全アイテムIDのリスト
+  // useMemoでgameStateの変更時のみ再計算
   const allItemIds = useMemo(() => {
     const zoneCards = Object.values(gameState.zones).filter(Boolean).map(c => c!.id);
     return [
-        ...Object.keys(gameState.zones), 'deck', 'hand', 'grave', 'extra', 'free',
-        ...gameState.deck.map(c => c.id), ...gameState.hand.map(c => c.id),
+        ...Object.keys(gameState.zones), 'deck', 'hand', 'grave', 'extra', 'free', //ゾーンへのID
+        ...gameState.deck.map(c => c.id), ...gameState.hand.map(c => c.id), // 各ゾーンのカードID
         ...gameState.grave.map(c => c.id), ...gameState.extra.map(c => c.id),
         ...gameState.free.map(c => c.id),
         ...zoneCards
     ];
   }, [gameState]);
 
+  // コンテキストメニュー用
   const currentCardState = contextMenu ? getCardState(contextMenu.cardId) : null;
   const isFaceDownDefense = currentCardState?.hidden && currentCardState?.rotation === -90;
   const isDraggingAny = !!activeCard;
 
+
+////////// レンダリング //////////
   return (
     <DndContext 
     sensors={sensors} 
@@ -387,8 +440,9 @@ export const FieldLayout: React.FC<FieldLayoutProps> = ({ initialGameState }) =>
     >
       <div className="field-grid">
         <SortableContext items={allItemIds} strategy={rectSortingStrategy}>
+          {/* 上部メニュー */}
           <div style={{gridArea: 'menu'}} className="display">
-              <button onClick={resetGame} className="operation-button top-menu red">
+              <button onClick={openResetPopup} className="operation-button top-menu red">
                 リセット
                 <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M22 12c0 5.523-4.477 10-10 10S2 17.523 2 12S6.477 2 12 2v2a8 8 0 1 0 4.5 1.385V8h-2V2h6v2H18a9.99 9.99 0 0 1 4 8" /></svg>
                 </button>
@@ -411,6 +465,7 @@ export const FieldLayout: React.FC<FieldLayoutProps> = ({ initialGameState }) =>
             </div>
           </div>
           
+          {/* シングルカードゾーン（モンスター、魔法、フィールド）の描画 */}
           {Object.entries(gameState.zones).map(([id, card]) => (
               <FieldZones 
                 key={id} 
@@ -436,6 +491,7 @@ export const FieldLayout: React.FC<FieldLayoutProps> = ({ initialGameState }) =>
               </FieldZones>
           ))}
 
+          {/* 配列ゾーン（デッキ、手札、墓地など）の描画 */}
           <FieldZones id="deck" 
             cards={gameState.deck} 
             count={gameState.deck.length} 
@@ -495,18 +551,23 @@ export const FieldLayout: React.FC<FieldLayoutProps> = ({ initialGameState }) =>
             isDraggingAny={isDraggingAny} 
           />
 
+          {/* デッキ操作ボタン */}
           <div className="deck-buttons-container">
-              <button onClick={() => handleDraw(1)} className="operation-button deck-menu">
-                <span>1枚ドロー</span>
-                <img src={`${process.env.PUBLIC_URL}/draw.png`} alt="1ドロー" style={{ width: '1.5em', height: '1.5em', marginLeft:'0.5em', opacity:'0.7'}}/>
-                </button>
+              <button onClick={handleSmartDraw} className="operation-button deck-menu">
+                <span>通常ドロー</span>
+                <img src={`${process.env.PUBLIC_URL}/draw.png`} alt="通常ドロー" style={{ width: '1.5em', height: '1.5em', marginLeft:'0.5em', opacity:'0.4'}}/>
+              </button>
+              <button onClick={()=> handleDraw(1)} className="operation-button deck-menu">
+                <span>+１枚</span>
+                <img src={`${process.env.PUBLIC_URL}/draw.png`} alt="通常ドロー" style={{ width: '1.5em', height: '1.5em', marginLeft:'0.5em', opacity:'0.4'}}/>
+              </button>
               <button 
                 onClick={handleSendTopToGrave} 
                 className="operation-button deck-menu">
                   <span>トップを墓地へ</span>
                   <img src={`${process.env.PUBLIC_URL}/grave.png`} 
                   alt="トップを墓地へ" 
-                  style={{ width: '1.5em', height: '1.5em', marginLeft:'0.5em',opacity:'0.7'}}/>
+                  style={{ width: '1.5em', height: '1.5em', marginLeft:'0.5em',opacity:'0.4'}}/>
                 </button>
               <button onClick={handleShuffle} className="operation-button deck-menu">
                <span>シャッフル</span>
@@ -514,6 +575,7 @@ export const FieldLayout: React.FC<FieldLayoutProps> = ({ initialGameState }) =>
               </button>
           </div>
 
+          {/* フリーゾーン操作ボタン */}
           <div className="free-buttons-container">
               <button 
                 onClick={handleReturnFreeToTop} 
@@ -530,80 +592,78 @@ export const FieldLayout: React.FC<FieldLayoutProps> = ({ initialGameState }) =>
                 <span>デッキ下へ戻す</span>
               </button>
           </div>
-
         </SortableContext>
-            {showGravePopup && (
-              <div className="popup-overlay" 
-              onClick={() => setShowGravePopup(false)}>
-                <div className="popup" onClick={e => e.stopPropagation()}>
-                  <div className="popup-header">
-                      <h3 className="popup-title">墓地 ({gameState.grave.length}枚)</h3>
-                      <button 
-                      className="close-button" 
-                      onClick={() => setShowGravePopup(false)}>
-                        <svg xmlns="http://www.w3.org/2000/svg" 
-                          width="18px" 
-                          height="18px" 
-                          viewBox="0 0 24 24">
-                          <path fill="none" 
-                          stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M20 20L4 4m16 0L4 20" />
-                        </svg></button>
-                  </div>
-                  <div className="popup-content">
-                        <div style={{position: 'relative', 
-                          minHeight: `${Math.ceil(gameState.grave.length / (width < 490 ? 1 : 2)) * 130}px`}}>
-                         {gameState.grave.map((card, i) => {
-                           // ★★★ ここからがレスポンシブ対応のロジック ★★★
-                           let cardStyle: React.CSSProperties = {};
-                           const isSmallScreen = width < 490; // タブレットサイズをブレークポイントに
 
-                           if (isSmallScreen) {
-                               // 画面が狭い場合：カードを1列で中央に配置
-                               cardStyle = {
-                                   position: 'absolute',
-                                   top: `${i * 11}em`, // 縦の間隔を調整
-                                  //  left: '50%',
-                                  // transform: 'translateX(-50%)', // 中央揃え
-                                   width: 'auto', // 横幅を親要素に対する割合で指定
-                                   height: `10.8rem`,
-                                   zIndex: i + 2,
-                               };
-                           } else {
-                               // 画面が広い場合：従来の2列表示
-                               cardStyle = {
-                                   position: 'absolute',
-                                   left: `${(i % 2) * 6.8}rem`,
-                                   top: `${Math.floor(i / 2) * 10}rem`,
-                                   zIndex: i + 2,
-                                   width:'auto',
-                                   height:'9.6rem',
-                               };
-                           }
-                           // ★★★ ここまで ★★★
-                                return <SortableCard 
-                                   key={card.id} 
-                                   card={card}
-                                   style={cardStyle} 
-                                  onContextMenu={handleContextMenu} 
-                                  cardState={getCardState(card.id)} 
-                                  isHovered={hoveredCardId === card.id} 
-                                  onMouseEnter={setHoveredCardId} onMouseLeave={() => setHoveredCardId(null)} isDraggingAny={isDraggingAny} 
-                                 />
-                          })}
-                          </div>
-                  </div>
+          {/* 墓地ポップアップ */}
+            {showGravePopup && (
+            <div className="popup-overlay" 
+            onClick={() => setShowGravePopup(false)}>
+              <div className="popup" onClick={e => e.stopPropagation()}>
+                <div className="popup-header">
+                  <h3 className="popup-title">墓地 ({gameState.grave.length}枚)</h3>
+                    <button 
+                    className="close-button" 
+                    onClick={() => setShowGravePopup(false)}>
+                      <svg xmlns="http://www.w3.org/2000/svg" 
+                        width="18px" 
+                        height="18px" 
+                        viewBox="0 0 24 24">
+                        <path fill="none" 
+                        stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M20 20L4 4m16 0L4 20" />
+                      </svg></button>
+                      
+                </div>
+                <div className="popup-content">
+                      <div style={{position: 'relative', 
+                        minHeight: `${Math.ceil(gameState.grave.length / (width < 490 ? 1 : 2)) * 130}px`}}>
+                        {gameState.grave.map((card, i) => {
+                          // レスポンシブ対応ロジック
+                          let cardStyle: React.CSSProperties = {};
+                          const isSmallScreen = width < 490; // タブレットサイズをブレークポイントに
+                          if (isSmallScreen) {
+                              // 画面が狭い場合：カードを1列で中央に配置
+                              cardStyle = {
+                                  position: 'absolute',
+                                  top: `${i * 11}em`, // 縦の間隔を調整
+                                  width: 'auto', // 横幅を親要素に対する割合で指定
+                                  height: `10.8rem`,
+                                  zIndex: i + 2,
+                              };
+                          } else {
+                              // 画面が広い場合：従来の2列表示
+                              cardStyle = {
+                                  position: 'absolute',
+                                  left: `${(i % 2) * 6.8}rem`,
+                                  top: `${Math.floor(i / 2) * 10}rem`,
+                                  zIndex: i + 2,
+                                  width:'auto',
+                                  height:'9.6rem',
+                              };
+                          }
+                          return <SortableCard 
+                            key={card.id} 
+                            card={card}
+                            style={cardStyle} 
+                            onContextMenu={handleContextMenu} 
+                            cardState={getCardState(card.id)} 
+                            isHovered={hoveredCardId === card.id} 
+                            onMouseEnter={setHoveredCardId} onMouseLeave={() => setHoveredCardId(null)} isDraggingAny={isDraggingAny} 
+                            />
+                        })}
+                        </div>
                 </div>
               </div>
-            )}
+            </div>
+          )}
       </div>
+
+      {/* ドロップ時のアニメーションを無効化 
+       */}
       <DragOverlay
-        // ★★★★★ ドロップ時のアニメーションを無効化 ★★★★★
         dropAnimation={null}
       >
         {activeCard ? (() => {
           const rotation = getCardState(activeCard.id).rotation;
-          
-          // 中央揃えのスタイル（transform: translate を使う方法に戻します）
           let transformString = `rotate(${rotation}deg)`;
           if (rotation !== 0) {
             transformString += ' translate(-50%, 50%)';
@@ -623,26 +683,66 @@ export const FieldLayout: React.FC<FieldLayoutProps> = ({ initialGameState }) =>
         })() : null}
       </DragOverlay>
 
+      {/* カード画像選択時ポップアップ */}
       {contextMenu && (
         <div 
         className="context-menu" 
         style={{top: contextMenu.y, left: contextMenu.x}} 
         onClick={e => e.stopPropagation()}>
             { (contextMenu.location.startsWith('monster') || contextMenu.location.startsWith('spell') || contextMenu.location.startsWith('field')) &&
-                <button onClick={toggleDisplayMode} className="context-menu-button">表示形式を変更</button>
+                <button onClick={toggleDisplayMode} className="context-menu-button">
+                  表示形式を変更
+                </button>
             }
             {contextMenu.location.startsWith('monster') && (
-                <button onClick={setFaceDownDefense} className="context-menu-button" disabled={isFaceDownDefense}>裏側守備表示</button>
+                <button onClick={setFaceDownDefense} className="context-menu-button" disabled={isFaceDownDefense}>
+                  裏側守備表示
+                </button>
             )}
         </div>
       )}
-         {resultPopupContent && (
-        <div className="result-popup-overlay" onClick={() => setResultPopupContent(null)}>
-          <div className="result-popup" onClick={(e) => e.stopPropagation()}>
-            <p style={{ margin: '0 0 1.5rem 0', fontSize: '2.5em' }}>{resultPopupContent}</p>
-            <button className="operation-button" style={{ width: '100px', margin: '0 auto'}} onClick={() => setResultPopupContent(null)}>
-              OK
-            </button>
+
+      {/* サイコロ・コイン結果ポップアップ */}
+      {resultPopupContent && (
+      <div className="result-popup-overlay" onClick={() => setResultPopupContent(null)}>
+        <div className="result-popup" onClick={(e) => e.stopPropagation()}>
+          <p style={{ margin: '0 0 1.5rem 0', fontSize: '2.5em' }}>{resultPopupContent}</p>
+          <button className="operation-button" style={{ width: '100px', margin: '0 auto'}} onClick={() => setResultPopupContent(null)}>
+            OK
+          </button>
+        </div>
+      </div>
+      )}
+
+      {/* リセット選択ポップアップ */}
+      {isResetPopupOpen && (
+        <div className="result-popup-overlay" onClick={() => setIsResetPopupOpen(false)}>
+          <div className="result-popup" style={{padding: '2rem 3rem'}} onClick={(e) => e.stopPropagation()}>
+            <h3 style={{ marginTop: 0, fontSize: '2.2em' }}>リセットの種類を選択</h3>
+            <p style={{fontSize: '1.8em'}}>どちらのリセットを実行しますか？</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', marginTop: '2rem' }}>
+              <button 
+                onClick={handleFullReset} 
+                className="operation-button" 
+                style={{width: '100%', padding: '1.5rem'}}
+              >
+                初期状態に戻す
+              </button>
+              <button 
+                onClick={handleShuffleReset} 
+                className="operation-button" 
+                style={{width: '100%', padding: '1.5rem'}}
+              >
+                シャッフルしてリセット
+              </button>
+              <button 
+                onClick={() => setIsResetPopupOpen(false)} 
+                className="operation-button" 
+                style={{width: '100%', padding: '1.5rem', backgroundColor: '#a8a8a8ff'}}
+              >
+                キャンセル
+              </button>
+            </div>
           </div>
         </div>
       )}

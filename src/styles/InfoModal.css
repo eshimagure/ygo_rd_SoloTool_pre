@@ -99,6 +99,7 @@
   line-height: 1.6;
 }
 
+/* ダークモードレイアウト */
 @media (prefers-color-scheme: dark) {
 .info-modal {
   background: #444444;

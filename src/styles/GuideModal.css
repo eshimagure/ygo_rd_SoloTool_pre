@@ -54,7 +54,7 @@
 
 .guide-modal-content {
   padding: 2rem 1.5rem;
-  overflow-y: auto; /* ★★★ この設定でコンテンツが長くなるとスクロールする ★★★ */
+  overflow-y: auto; /* この設定でコンテンツが長くなるとスクロールする */
 }
 
 .guide-modal-content h3 {

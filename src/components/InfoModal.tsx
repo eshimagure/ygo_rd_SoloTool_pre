@@ -57,6 +57,16 @@ const qaContent = (
 
 const historyContent = (
   <div>
+     <h3>Ver. 1.1.0 (2025-10-29)</h3>
+      <ul>
+        <li><strong>✨ 機能追加</strong>
+          <ul>
+            <li>「通常ドロー」ボタン追加</li>
+            <li>リセットに「シャッフルしてリセット」機能追加</li>
+            <li>画面・カードの表示レイアウトを一部変更</li>
+          </ul>
+        </li>
+      </ul>
      <h3>Ver. 1.0.0 (2025-08-17)</h3>
       <ul>
         <li><strong>✨ 機能追加</strong>
@@ -75,7 +85,6 @@ const tabItems: TabItem[] = [
   { label: 'Q&A', content: qaContent },
   { label: '更新履歴', content: historyContent },
 ];
-
 
 interface InfoModalProps {
   isOpen: boolean;

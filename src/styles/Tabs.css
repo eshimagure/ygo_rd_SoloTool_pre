@@ -37,7 +37,7 @@
   overflow-y: auto; /* コンテンツが多ければスクロール */
 }
 
-/* ダークモード */
+/* ダークモードレイアウト */
 @media (prefers-color-scheme: dark) {
  .tab-button--active {
   color: #b8b4ff;
