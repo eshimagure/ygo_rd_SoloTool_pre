@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/ygo_rd_SoloTool_pre/static/css/main.3bfb13ac.css",
+    "main.js": "/ygo_rd_SoloTool_pre/static/js/main.5abffa21.js",
+    "static/js/453.fdc042b9.chunk.js": "/ygo_rd_SoloTool_pre/static/js/453.fdc042b9.chunk.js",
+    "index.html": "/ygo_rd_SoloTool_pre/index.html",
+    "main.3bfb13ac.css.map": "/ygo_rd_SoloTool_pre/static/css/main.3bfb13ac.css.map",
+    "main.5abffa21.js.map": "/ygo_rd_SoloTool_pre/static/js/main.5abffa21.js.map",
+    "453.fdc042b9.chunk.js.map": "/ygo_rd_SoloTool_pre/static/js/453.fdc042b9.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.3bfb13ac.css",
+    "static/js/main.5abffa21.js"
+  ]
+}
