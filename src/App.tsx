@@ -7,6 +7,8 @@ import { HamburgerMenu } from './components/HamburgerMenu';
 import { GuideModal } from './components/GuideModal'; 
 import { InfoModal } from './components/InfoModal';
 import './App.css';
+// "homepage": "https://eshimagure.github.io/ygo_rd_SoloTool_pre/",
+// "homepage": "https://ygo-rd-fansite.ltt.jp/SoloTool/pre/",
 
 // ゲーム状態の空の初期値
 const emptyGameState: GameState = {

@@ -12,7 +12,9 @@ const termsContent = (
       <ul>
         <li>個人で練習や研究のために楽しむ範囲でのご利用。</li>
         <li>画面スクリーンショットの共有。パズルデュエルの作問などにご利用下さい。</li>
-        <li>動画や配信での利用。（収益化しているチャンネルでの利用もOK）</li>
+        <li>動画や配信でのツール紹介。（収益化しているチャンネルでの利用もOK）<br/>
+        ※ツールの紹介のみOKで、動画や配信で実際にツールを使用して一人回しをする事はNG。
+        </li>
       </ul>
 
     <h4>禁止事項（やめてほしいこと）</h4>
@@ -20,6 +22,9 @@ const termsContent = (
         <li>特定の個人や団体への誹謗中傷、差別的な内容、他者を攻撃する目的のコンテンツでの利用。</li>
         <li>公序良俗に反するコンテンツでの利用。</li>
         <li>本ツールの改変なしでの再配布や販売。（本ツールを元に大幅な改変を加えたものについては言及しません）</li>
+        <li>動画や配信でツールを使用して実際に一人回しをする事。<br/>
+        ※<a href="https://www.konami.com/yugioh/guide/movieguideline" target="_blank" rel="noopener noreferrer">遊戯王カードゲーム 動画投稿ガイドライン</a> より、実物のカードを使用していないプレー動画はガイドライン違反になる可能性があるため。
+        </li>
       </ul>
 
     <h4>お願いしたいこと（クレジット表記）</h4>
@@ -42,7 +47,10 @@ const qaContent = (
      <ul>
         <li><strong>動画や配信で利用しても良いですか？</strong>
           <ul>
-            <li>利用規約をお読みの上、サイトのURLを概要欄などわかりやすい箇所に記入して頂ければOKです。<br/><strong className='red'>【遊戯王ラッシュデュエル 一人回しツール Pre版】 https://ygo-rd-fansite.ltt.jp/SoloTool/pre/</strong>
+            <li>公式発表の <a href="https://www.konami.com/yugioh/guide/movieguideline" target="_blank" rel="noopener noreferrer">遊戯王カードゲーム 動画投稿ガイドライン</a> より、実物のカードを使用していないプレー動画はガイドライン違反になる可能性があるため、<b>動画や配信上での本ツールの紹介はOKですが、実際に一人回しプレーする事はNGです。</b><br/>
+            こちらご理解頂けますと幸いです。
+            </li>
+            <li>紹介の際は、サイトのURLを概要欄などわかりやすい箇所に記入して頂ければOKです。<br/><strong className='red'>【遊戯王ラッシュデュエル 一人回しツール Pre版】 https://ygo-rd-fansite.ltt.jp/SoloTool/pre/</strong>
             </li>
           </ul>
         </li>
@@ -57,6 +65,14 @@ const qaContent = (
 
 const historyContent = (
   <div>
+      <h3>Ver. 1.1.1 (2026-02-15)</h3>
+      <ul>
+        <li><strong>✨ 機能追加</strong>
+          <ul>
+            <li>利用規約を一部変更（動画・配信での利用）</li>
+          </ul>
+        </li>
+      </ul>
      <h3>Ver. 1.1.0 (2025-10-29)</h3>
       <ul>
         <li><strong>✨ 機能追加</strong>
